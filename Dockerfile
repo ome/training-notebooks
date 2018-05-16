@@ -15,3 +15,65 @@ COPY . notebooks
 USER root
 RUN chown -R 1000:100 notebooks
 USER jovyan
+
+
+# Switch to root to install R
+
+USER root
+RUN apt-get update -y && \
+    apt-get install -y wget
+
+# Dependencies necessary for install.R
+RUN apt-get update && \
+    apt-get -y install libssl-dev libxml2-dev libcurl4-openssl-dev libpcre3 libpcre3-dev liblzma-dev libbz2-dev libjpeg-dev libssh2-1-dev
+
+# Install newer version of R. Run apt-get -y install r-base installs version 3.2
+RUN sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list
+RUN gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
+RUN gpg -a --export E084DAB9 | sudo apt-key add -
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends r-recommended r-base
+
+
+## Install Java 
+RUN apt-get -y install software-properties-common \
+	&& apt-get -y install software-properties-common \
+    && add-apt-repository -y ppa:openjdk-r/ppa \
+    && apt-get update \
+    && apt-get -y install openjdk-8-jdk
+
+RUN R CMD javareconf
+
+# Required for romero
+RUN apt-get install -y git maven \ 
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+
+## make sure Java can be found in rApache and other daemons not looking in R ldpaths
+RUN echo "/usr/lib/jvm/openjdk-8-jdk/jre/lib/amd64/server/" > /etc/ld.so.conf.d/rJava.conf
+RUN /sbin/ldconfig
+RUN rm -rf /usr/lib/jvm/java
+RUN ln -s  /usr/lib/jvm/openjdk-8-jdk /usr/lib/jvm/java
+
+## Install rJava package
+RUN apt-get update \
+    && apt-get install -y r-cran-rjava
+
+# Changed from rOMERO-gateway/Dockerfile
+RUN chown jovyan /usr/local/lib/R/site-library
+
+RUN mkdir /romero \
+ && wget https://raw.githubusercontent.com/ome/rOMERO-gateway/v0.3.0/install.R
+
+USER jovyan
+
+# install romero
+ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
+
+RUN Rscript install.R --version=v0.3.0
+
+# install r-kernel
+RUN Rscript -e "install.packages(c(\"devtools\"), repos = c(\"http://irkernel.github.io/\", \"http://cran.rstudio.com\"))"
+
+RUN Rscript -e "library(\"devtools\")" -e "install_github(\"IRkernel/repr\")" -e "install_github(\"IRkernel/IRdisplay\")" -e "install_github('IRkernel/IRkernel')" -e "IRkernel::installspec()"
