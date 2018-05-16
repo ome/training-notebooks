@@ -20,10 +20,8 @@ USER jovyan
 # Switch to root to install R
 
 USER root
-RUN apt-get update -y && \
-    apt-get install -y wget
 
-# Dependencies necessary for install.R
+# Install prerequisites to install R
 RUN apt-get update && \
     apt-get -y install libssl-dev libxml2-dev libcurl4-openssl-dev libpcre3 libpcre3-dev liblzma-dev libbz2-dev libjpeg-dev libssh2-1-dev
 
@@ -63,17 +61,18 @@ RUN apt-get update \
 # Changed from rOMERO-gateway/Dockerfile
 RUN chown jovyan /usr/local/lib/R/site-library
 
+
 RUN mkdir /romero \
- && wget https://raw.githubusercontent.com/ome/rOMERO-gateway/v0.3.0/install.R
+ && curl https://raw.githubusercontent.com/ome/rOMERO-gateway/v0.3.0/install.R --output install.R
 
 USER jovyan
 
-# install romero
+# install rOMERO
 ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
 
 RUN Rscript install.R --version=v0.3.0
 
-# install r-kernel
+# install r-kernel and make it accessible
 RUN Rscript -e "install.packages(c(\"devtools\"), repos = c(\"http://irkernel.github.io/\", \"http://cran.rstudio.com\"))"
 
 RUN Rscript -e "library(\"devtools\")" -e "install_github(\"IRkernel/repr\")" -e "install_github(\"IRkernel/IRdisplay\")" -e "install_github('IRkernel/IRkernel')" -e "IRkernel::installspec()"
