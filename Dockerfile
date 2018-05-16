@@ -58,7 +58,7 @@ RUN ln -s  /usr/lib/jvm/openjdk-8-jdk /usr/lib/jvm/java
 RUN apt-get update \
     && apt-get install -y r-cran-rjava
 
-# Changed from rOMERO-gateway/Dockerfile
+# Change owner
 RUN chown jovyan /usr/local/lib/R/site-library
 
 
