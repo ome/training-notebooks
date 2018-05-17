@@ -14,6 +14,6 @@ The notebooks in this repository are meant to exemplify how to access data in OM
 
 | **Notebook** | **Lang** | **Description** |
 |--------------|----------|-----------------|
-| **[OMERO example](Python/OMEROHelloWolrdNotebook.ipynb)** | Py | Shows how to connect to OMERO and read data. |
+| **[OMERO example](Python/OMEROHelloWorldNotebook.ipynb)** | Py | Shows how to connect to OMERO and read data. |
 | **[Calculate Sharpness](Python/CalculateSharpness.ipynb)** | Py | Calculates sharpness of images and generates heatmaps. |
 | **[Illumination Correction](Python/IlluminationCorrectionNotebook.ipynb)** | Py | Correct the selected image. |
