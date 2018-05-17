@@ -6,6 +6,8 @@ To build the image run, in this repository:
 
     $ docker build -t training-notebooks .
 
+The image contains the dependencies required to connect to OMERO 5.4.x.
+
 To start the image:
 
     $ docker run -it  -p 8888:8888 training-notebooks
