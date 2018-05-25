@@ -63,14 +63,14 @@ RUN chown jovyan /usr/local/lib/R/site-library
 
 
 RUN mkdir /romero \
- && curl https://raw.githubusercontent.com/ome/rOMERO-gateway/master/install.R --output install.R
+ && curl https://raw.githubusercontent.com/ome/rOMERO-gateway/v0.4.0/install.R --output install.R
 
 USER jovyan
 
 # install rOMERO
 ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
 
-RUN Rscript install.R
+RUN Rscript install.R --version=v0.4.0
 
 # install r-kernel and make it accessible
 RUN Rscript -e "install.packages(c(\"devtools\"), repos = c(\"http://irkernel.github.io/\", \"http://cran.rstudio.com\"))"
