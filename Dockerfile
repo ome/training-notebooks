@@ -25,6 +25,9 @@ USER root
 RUN apt-get update && \
     apt-get -y install libssl-dev libxml2-dev libcurl4-openssl-dev libpcre3 libpcre3-dev liblzma-dev libbz2-dev libjpeg-dev libssh2-1-dev
 
+# Required for the additional R libraries (see bottom)
+RUN apt-get -y install libtiff-dev libpng-dev libfftw3-dev
+
 # Install newer version of R. Run apt-get -y install r-base installs version 3.2
 RUN sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list
 RUN gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
@@ -75,4 +78,7 @@ RUN Rscript install.R --version=v0.4.0
 # install r-kernel and make it accessible
 RUN Rscript -e "install.packages(c(\"devtools\"), repos = c(\"http://irkernel.github.io/\", \"http://cran.rstudio.com\"))"
 
-RUN Rscript -e "library(\"devtools\")" -e "install_github(\"IRkernel/repr\")" -e "install_github(\"IRkernel/IRdisplay\")" -e "install_github('IRkernel/IRkernel')" -e "IRkernel::installspec()"
+RUN Rscript -e "library(\"devtools\")" -e "install_github(\"IRkernel/repr\")" -e "install_github(\"IRkernel/IRdisplay\")" -e "install_github('IRkernel/IRkernel')" -e "IRkernel::installspec()" 
+
+# install additional useful R libraries
+RUN Rscript -e "install.packages(\"ggplot2\")" -e "source(\"https://bioconductor.org/biocLite.R\")" -e "biocLite(\"EBImage\")"
