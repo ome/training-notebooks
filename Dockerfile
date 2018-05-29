@@ -81,7 +81,7 @@ RUN Rscript -e "install.packages(c(\"devtools\"), repos = c(\"http://irkernel.gi
 RUN Rscript -e "library(\"devtools\")" -e "install_github(\"IRkernel/repr\")" -e "install_github(\"IRkernel/IRdisplay\")" -e "install_github('IRkernel/IRkernel')" -e "IRkernel::installspec()"
 
 # install additional useful R libraries
-RUN Rscript -e "install.packages(\"ggplot2\")" -e "source(\"https://bioconductor.org/biocLite.R\")" -e "biocLite(\"EBImage\")"
+RUN Rscript -e "install.packages(\"tidyverse\")" -e "source(\"https://bioconductor.org/biocLite.R\")" -e "biocLite(\"EBImage\")"
 
 # Delete the installation file
 RUN rm install.R
