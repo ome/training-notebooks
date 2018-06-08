@@ -16,10 +16,19 @@ USER root
 RUN chown -R 1000:100 notebooks
 USER jovyan
 
-
-# Switch to root to install R
-
+# Switch to root to install CellProfiler
 USER root
+
+## Install Java 
+RUN apt-get -y update && apt-get -y install software-properties-common \
+    && apt-get -y install software-properties-common \
+    && add-apt-repository -y ppa:openjdk-r/ppa \
+    && apt-get update \
+    && apt-get -y install openjdk-8-jdk
+
+# Cell Profiler
+ADD docker/environment-python2-cellprofiler.yml .setup/
+RUN conda env update -n python2 -f .setup/environment-python2-cellprofiler.yml
 
 # Install prerequisites to install R
 RUN apt-get update && \
@@ -32,13 +41,6 @@ RUN gpg -a --export E084DAB9 | sudo apt-key add -
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends r-recommended r-base
 
-
-## Install Java 
-RUN apt-get -y install software-properties-common \
-	&& apt-get -y install software-properties-common \
-    && add-apt-repository -y ppa:openjdk-r/ppa \
-    && apt-get update \
-    && apt-get -y install openjdk-8-jdk
 
 RUN R CMD javareconf
 
@@ -54,13 +56,14 @@ RUN /sbin/ldconfig
 RUN rm -rf /usr/lib/jvm/java
 RUN ln -s  /usr/lib/jvm/openjdk-8-jdk /usr/lib/jvm/java
 
+
+
 ## Install rJava package
 RUN apt-get update \
     && apt-get install -y r-cran-rjava
 
 # Change owner
 RUN chown jovyan /usr/local/lib/R/site-library
-
 
 RUN mkdir /romero \
  && curl https://raw.githubusercontent.com/ome/rOMERO-gateway/v0.4.0/install.R --output install.R
@@ -76,3 +79,6 @@ RUN Rscript install.R --version=v0.4.0
 RUN Rscript -e "install.packages(c(\"devtools\"), repos = c(\"http://irkernel.github.io/\", \"http://cran.rstudio.com\"))"
 
 RUN Rscript -e "library(\"devtools\")" -e "install_github(\"IRkernel/repr\")" -e "install_github(\"IRkernel/IRdisplay\")" -e "install_github('IRkernel/IRkernel')" -e "IRkernel::installspec()"
+
+# Delete the installation file
+RUN rm install.R
