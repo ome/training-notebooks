@@ -19,12 +19,11 @@ USER jovyan
 # Switch to root to install CellProfiler
 USER root
 
-## Install Java 
-RUN apt-get -y update && apt-get -y install software-properties-common \
-    && apt-get -y install software-properties-common \
-    && add-apt-repository -y ppa:openjdk-r/ppa \
-    && apt-get update \
-    && apt-get -y install openjdk-8-jdk
+## Install Java
+RUN apt-get update \
+    && apt-get -y install default-jdk
+
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 # Cell Profiler
 ADD docker/environment-python2-cellprofiler.yml .setup/
@@ -51,11 +50,10 @@ RUN apt-get install -y git maven \
 
 
 ## make sure Java can be found in rApache and other daemons not looking in R ldpaths
-RUN echo "/usr/lib/jvm/openjdk-8-jdk/jre/lib/amd64/server/" > /etc/ld.so.conf.d/rJava.conf
+RUN echo "/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/" > /etc/ld.so.conf.d/rJava.conf
 RUN /sbin/ldconfig
 RUN rm -rf /usr/lib/jvm/java
-RUN ln -s  /usr/lib/jvm/openjdk-8-jdk /usr/lib/jvm/java
-
+RUN ln -s  /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/java
 
 
 ## Install rJava package
@@ -68,7 +66,6 @@ RUN chown jovyan /usr/local/lib/R/site-library
 RUN mkdir /romero \
  && curl https://raw.githubusercontent.com/ome/rOMERO-gateway/v0.4.0/install.R --output install.R
 
-USER jovyan
 
 # install rOMERO
 ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
@@ -82,3 +79,5 @@ RUN Rscript -e "library(\"devtools\")" -e "install_github(\"IRkernel/repr\")" -e
 
 # Delete the installation file
 RUN rm install.R
+
+USER jovyan
