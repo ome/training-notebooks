@@ -1,0 +1,38 @@
+channels:
+  - anaconda
+  - goodman
+  - bioconda
+  - conda-forge
+dependencies:
+  - appdirs
+  - cython
+  - h5py<2.8.0
+  - libtiff
+  - libxml2
+  - libxslt
+  - lxml
+  - packaging
+  - pillow
+  - pip
+  - pyzmq
+  - mahotas
+  - matplotlib!=2.1.0,>2.0.0
+  - mysql-python
+  - numpy
+  - raven
+  - requests
+  - scikit-image>=0.13
+  - scikit-learn
+  - scipy
+  - sphinx
+  - tifffile
+  - wxpython
+  - tornado=4.5.3 # bug with version 5.0. This implies that the kernel cannot start
+  - pip:
+    - cellh5
+    - centrosome
+    - inflect
+    - prokaryote
+    - javabridge
+    - python-bioformats
+    - git+https://github.com/CellProfiler/CellProfiler.git@v3.1.3
