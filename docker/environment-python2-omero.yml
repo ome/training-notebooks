@@ -3,4 +3,4 @@ channels:
 - bioconda
 dependencies:
 # bioconda
-- python-omero=5.4.5=py27_0
+- python-omero=5.4.6=py27_0
