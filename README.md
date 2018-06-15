@@ -21,3 +21,4 @@ The notebooks in this repository are meant to exemplify how to access data in OM
 | **[Illumination Correction](Python/IlluminationCorrectionNotebook.ipynb)** | Py | Correct the selected image. |
 | **[R-OMERO example](R/R-OMERO_Notebook.ipynb)** | R | Shows how to connect to OMERO and manipulate data using R. |
 | **[idr0021 ROIs](R/idr0021_rois.ipynb)** | R | Read OMERO.table data, performs some basic statistics on it and create a plot. |
+| **[Statistics](CellProfiler/Statistics.ipynb)** | Py | Process Images stored in OMERO using CellProfiler. |
