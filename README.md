@@ -13,7 +13,7 @@ To start the image:
     $ docker run -it  -p 8888:8888 training-notebooks
 
 To update a notebook while this is running:
-In another terminal, get container ID and copy notebook
+In another terminal, get the container ID and copy a notebook e.g. idr0002.ipynb
 
 	$ docker ps
 	$ docker cp CellProfiler/idr0002.ipynb <container_id>:/home/jovyan/notebooks/CellProfiler/idr0002.ipynb
