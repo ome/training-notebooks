@@ -30,9 +30,4 @@ dependencies:
   - tornado=4.5.3 # bug with version 5.0. This implies that the kernel cannot start
   - pip:
     - cellh5
-    - centrosome
-    - inflect
-    - prokaryote
-    - javabridge
-    - python-bioformats
     - git+https://github.com/CellProfiler/CellProfiler.git@v3.1.3
