@@ -12,6 +12,20 @@ To start the image:
 
     $ docker run -it  -p 8888:8888 training-notebooks
 
+To update a notebook while this is running:
+In another terminal, get the container ID and copy a notebook e.g. idr0002.ipynb
+
+	$ docker ps
+	$ docker cp CellProfiler/idr0002.ipynb <container_id>:/home/jovyan/notebooks/CellProfiler/idr0002.ipynb
+
+Now refresh the notebook in the browser.
+
+To restart a container and get the URL to open in your browser:
+
+	$ docker restart <container_id>
+	$ docker logs <container_id>
+
+
 The notebooks in this repository are meant to exemplify how to access data in OMERO.
 
 | **Notebook** | **Lang** | **Description** |
