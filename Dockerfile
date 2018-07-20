@@ -67,7 +67,7 @@ RUN apt-get update \
 RUN chown jovyan /usr/local/lib/R/site-library
 
 RUN mkdir /romero \
- && curl https://raw.githubusercontent.com/ome/rOMERO-gateway/v0.4.0/install.R --output install.R
+ && curl https://raw.githubusercontent.com/dominikl/rOMERO-gateway/63906f92fcd7458738a342ebae9c0f9f177416dc/install.R --output install.R
 
 
 # install rOMERO
