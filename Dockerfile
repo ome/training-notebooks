@@ -90,6 +90,16 @@ RUN Rscript -e "library(\"devtools\")" \
 # Delete the installation file
 RUN rm install.R
 
+ARG OMERO_SERVER=OMERO.server-5.4.6-ice36-b87
+RUN mkdir /opt/omero && \
+    cd /opt/omero && \
+    wget -q http://downloads.openmicroscopy.org/omero/5.4.6/artifacts/${OMERO_SERVER}.zip && \
+    unzip -q ${OMERO_SERVER}.zip && \
+    rm ${OMERO_SERVER}.zip && \
+    ln -s ${OMERO_SERVER} OMERO.server && \
+    echo '#!/bin/sh\nexec /opt/conda/envs/python2/bin/python /opt/omero/OMERO.server/bin/omero "$@"' > /usr/local/bin/omero && \
+    chmod 755 /usr/local/bin/omero
+
 # Clone the source git repo into notebooks
 # 20180418: COPY --chown doesn't work on Docker Hub
 #COPY --chown=1000:100 . notebooks
