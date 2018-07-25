@@ -4,22 +4,22 @@ MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 # create a python2 environment (for OMERO-PY compatibility)
 ADD docker/environment-python2-omero.yml .setup/
 RUN conda env update -n python2 -f .setup/environment-python2-omero.yml
-
-RUN /opt/conda/envs/python2/bin/python -m ipykernel install --user --name python2 --display-name 'OMERO Python 2'
+# Don't use this:
+# /opt/conda/envs/python2/bin/python -m ipykernel install --user --name python2 --display-name 'OMERO Python 2'
+# because it doesn't activate conda environment variables
 ADD docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python2/
-
-# Switch to root to install CellProfiler
+ADD docker/python2-kernel.json .local/share/jupyter/kernels/python2/kernel.json
 USER root
+RUN fix-permissions .local
+USER $NB_UID
 
-## Install Java
-RUN apt-get update \
-    && apt-get -y install default-jdk
-
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
-# Cell Profiler
+# Cell Profiler (add to the Python2 environment)
 ADD docker/environment-python2-cellprofiler.yml .setup/
 RUN conda env update -n python2 -f .setup/environment-python2-cellprofiler.yml
+# CellProfiler has to be installed in a separate step because it requires
+# the JAVA_HOME environment variable set in the updated environment
+ARG CELLPROFILER_VERSION=v3.1.3
+RUN bash -c "source activate python2 && pip install git+https://github.com/CellProfiler/CellProfiler.git@$CELLPROFILER_VERSION"
 
 # Install prerequisites to install R
 RUN apt-get update && \

@@ -19,6 +19,7 @@ dependencies:
   - matplotlib!=2.1.0,>2.0.0
   - mysql-python
   - numpy
+  - openjdk=8.0.*
   - raven
   - requests
   - scikit-image>=0.13
@@ -30,4 +31,3 @@ dependencies:
   - tornado=4.5.3 # bug with version 5.0. This implies that the kernel cannot start
   - pip:
     - cellh5
-    - git+https://github.com/CellProfiler/CellProfiler.git@v3.1.3
