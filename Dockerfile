@@ -21,74 +21,26 @@ RUN conda env update -n python2 -f .setup/environment-python2-cellprofiler.yml
 ARG CELLPROFILER_VERSION=v3.1.3
 RUN bash -c "source activate python2 && pip install git+https://github.com/CellProfiler/CellProfiler.git@$CELLPROFILER_VERSION"
 
-# Install prerequisites to install R
-RUN apt-get update && \
-    apt-get -y install libssl-dev \
-    libxml2-dev \
-    libcurl4-openssl-dev \
-    libpcre3 \
-    libpcre3-dev \
-    liblzma-dev \
-    libbz2-dev \
-    libjpeg-dev \
-    libssh2-1-dev \
-    libtiff-dev \
-    libpng-dev \
-    libfftw3-dev
+# R-kernel and R-OMERO prerequisites
+ADD docker/environment-r-omero.yml .setup/
+RUN conda env update -n r-omero -f .setup/environment-r-omero.yml && \
+    /opt/conda/envs/r-omero/bin/Rscript -e "IRkernel::installspec(displayname='OMERO R')"
 
-# Install newer version of R. Run apt-get -y install r-base installs version 3.2
-RUN sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list
-RUN gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
-RUN gpg -a --export E084DAB9 | sudo apt-key add -
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends r-recommended r-base
-
-
-RUN R CMD javareconf
-
-# Required for romero
-RUN apt-get install -y git maven \ 
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
-
-
-## make sure Java can be found in rApache and other daemons not looking in R ldpaths
-RUN echo "/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/" > /etc/ld.so.conf.d/rJava.conf
-RUN /sbin/ldconfig
-RUN rm -rf /usr/lib/jvm/java
-RUN ln -s  /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/java
-
-
-## Install rJava package
-RUN apt-get update \
-    && apt-get install -y r-cran-rjava
-
-# Change owner
-RUN chown jovyan /usr/local/lib/R/site-library
-
-RUN mkdir /romero \
- && curl https://raw.githubusercontent.com/dominikl/rOMERO-gateway/63906f92fcd7458738a342ebae9c0f9f177416dc/install.R --output install.R
-
+USER root
+RUN mkdir /opt/romero /opt/omero && \
+    fix-permissions /opt/romero /opt/omero
+# R requires these two packages at runtime
+RUN apt-get install -y \
+    libxrender1 \
+    libsm6
+USER $NB_UID
 
 # install rOMERO
 ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
-
-RUN Rscript install.R --version=v0.4.0
-
-# install r-kernel and make it accessible
-RUN Rscript -e "install.packages(c(\"devtools\"), repos = c(\"http://irkernel.github.io/\", \"http://cran.rstudio.com\"))"
-
-RUN Rscript -e "library(\"devtools\")" \
--e "install_github(\"IRkernel/repr\")" \
--e "install_github(\"IRkernel/IRdisplay\")" \
--e "install_github('IRkernel/IRkernel')" \
--e "IRkernel::installspec()" \
--e "install.packages(\"tidyverse\")" \
--e "source(\"https://bioconductor.org/biocLite.R\")" \
--e "biocLite(\"EBImage\")"
-
-# Delete the installation file
-RUN rm install.R
+ARG ROMERO_VERSION=v0.4.1
+RUN cd /opt/romero && \
+    curl https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
+    bash -c "source activate r-omero && Rscript install.R --version=$ROMERO_VERSION"
 
 ARG OMERO_SERVER=OMERO.server-5.4.6-ice36-b87
 RUN mkdir /opt/omero && \
