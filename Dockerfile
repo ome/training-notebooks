@@ -42,15 +42,14 @@ RUN cd /opt/romero && \
     curl https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
     bash -c "source activate r-omero && Rscript install.R --version=$ROMERO_VERSION"
 
-ARG OMERO_SERVER=OMERO.server-5.4.6-ice36-b87
-RUN mkdir /opt/omero && \
-    cd /opt/omero && \
-    wget -q http://downloads.openmicroscopy.org/omero/5.4.6/artifacts/${OMERO_SERVER}.zip && \
-    unzip -q ${OMERO_SERVER}.zip && \
-    rm ${OMERO_SERVER}.zip && \
-    ln -s ${OMERO_SERVER} OMERO.server && \
-    echo '#!/bin/sh\nexec /opt/conda/envs/python2/bin/python /opt/omero/OMERO.server/bin/omero "$@"' > /usr/local/bin/omero && \
-    chmod 755 /usr/local/bin/omero
+# OMERO full CLI
+# This currently uses the python2 environment, should we move it to its own?
+ARG OMERO_VERSION=5.4.6
+RUN cd /opt/omero && \
+    /opt/conda/envs/python2/bin/pip install omego && \
+    /opt/conda/envs/python2/bin/omego download --sym OMERO.server server --release $OMERO_VERSION && \
+    rm OMERO.server-*.zip
+ADD docker/omero-bin.sh /usr/local/bin/omero
 
 # Clone the source git repo into notebooks
 # 20180418: COPY --chown doesn't work on Docker Hub
