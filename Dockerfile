@@ -44,7 +44,7 @@ RUN cd /opt/romero && \
 
 # OMERO full CLI
 # This currently uses the python2 environment, should we move it to its own?
-ARG OMERO_VERSION=5.4.6
+ARG OMERO_VERSION=5.4.7
 RUN cd /opt/omero && \
     /opt/conda/envs/python2/bin/pip install omego && \
     /opt/conda/envs/python2/bin/omego download --sym OMERO.server server --release $OMERO_VERSION && \
