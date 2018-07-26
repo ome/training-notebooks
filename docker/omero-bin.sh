@@ -1,2 +1,3 @@
-#!/bin/sh
-exec /opt/conda/envs/python2/bin/python /opt/omero/OMERO.server/bin/omero "$@"
+#!/bin/bash
+source activate python2
+exec /opt/omero/OMERO.server/bin/omero "$@"
