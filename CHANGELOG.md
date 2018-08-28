@@ -1,7 +1,7 @@
 0.3.0 (August 2018)
 -------------------
 
-- Review installation of R, CellProfiler
+- Review installation of R and CellProfiler
 - Allow to run OMERO using CLI
 - Adjust idr0021 notebook to match changes in the analysis workflow
 
