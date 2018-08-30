@@ -4,6 +4,7 @@
 - Review installation of R and CellProfiler
 - Allow to run OMERO using CLI
 - Adjust idr0021 notebook to match changes in the analysis workflow
+- Ask user to enter credentials
 
 0.2.0 (June 2018)
 -----------------
