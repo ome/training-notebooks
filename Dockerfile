@@ -30,6 +30,12 @@ RUN mkdir /opt/romero /opt/omero && \
 RUN apt-get install -y -q \
     libxrender1 \
     libsm6
+
+# For openCV
+RUN apt-get update && \
+    apt-get install -y -q \
+    libgl1-mesa-glx
+
 USER $NB_UID
 
 # install rOMERO
