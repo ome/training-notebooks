@@ -37,7 +37,7 @@ ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
 ARG ROMERO_VERSION=v0.4.2
 RUN cd /opt/romero && \
     curl -sf https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
-    bash -c "source activate r-omero && Rscript install.R --version=$ROMERO_VERSION --quiet"
+    bash -c "source activate r-omero && Rscript install.R --user=dominikl --branch=rois_channelnames --quiet"
 
 # OMERO full CLI
 # This currently uses the python2 environment, should we move it to its own?
