@@ -30,6 +30,6 @@ dependencies:
   - wxpython=4.0.*
   - tornado=4.5.3 # bug with version 5.0. This implies that the kernel cannot start
   # not directly required by CP but need to be in this file so it can be accessible
-  - opencv=3.4.3
+  - opencv=3.4.*
   - pip:
     - cellh5
