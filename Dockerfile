@@ -23,14 +23,26 @@ ADD docker/environment-r-omero.yml .setup/
 RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
     /opt/conda/envs/r-omero/bin/Rscript -e "IRkernel::installspec(displayname='OMERO R')"
 
+# Install BeakerX
+RUN conda install -c conda-forge beakerx
+
 USER root
-RUN mkdir /opt/romero /opt/omero && \
-    fix-permissions /opt/romero /opt/omero
+RUN mkdir /opt/romero /opt/omero /opt/java-apps && \
+    fix-permissions /opt/romero /opt/omero /opt/java-apps
 # R requires these two packages at runtime
 RUN apt-get install -y -q \
     libxrender1 \
     libsm6
+
+# Installed so we can edit the configuration file for Orbit
+RUN apt-get update
+RUN apt-get install -y -q vim
+
 USER $NB_UID
+
+# install orbit
+RUN cd /opt/java-apps && \
+    curl http://www.stritt.de/files/orbit_linux_306.tar.gz | tar xvz
 
 # install rOMERO
 ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
