@@ -34,7 +34,7 @@ RUN apt-get install -y -q \
     libxrender1 \
     libsm6
 
-# Installed so we can edit the configuration file for Orbit
+# Install for convenience so we can edit the configuration file for Orbit
 RUN apt-get update
 RUN apt-get install -y -q vim
 
