@@ -62,3 +62,4 @@ ADD docker/omero-bin.sh /usr/local/bin/omero
 
 # Clone the source git repo into notebooks (keep this at the end of the file)
 COPY --chown=1000:100 . notebooks
+RUN  mv notebooks/OrbitOmero.properties .
