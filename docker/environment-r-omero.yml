@@ -3,11 +3,11 @@ channels:
 - conda-forge
 - defaults
 dependencies:
-- bioconductor-ebimage=4.13.*
+- bioconductor-ebimage=4.22.*
 - openjdk=8.0.*
-- r-base=3.4.*
+- r-base=3.5_1
 - r-jpeg=0.1_8
-- r-rjava=0.9_8
-- r-irdisplay=0.4.*
+- r-rjava=0.9_10
+- r-irdisplay=0.5.*
 - r-irkernel=0.8.*
 prefix: /opt/conda/envs/r-omero
