@@ -1,4 +1,4 @@
-FROM imagedata/jupyter-docker:0.8.1
+FROM imagedata/jupyter-docker:0.9.2
 MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 
 # create a python2 environment (for OMERO-PY compatibility)
@@ -15,7 +15,7 @@ ADD docker/environment-python2-cellprofiler.yml .setup/
 RUN conda env update -n python2 -q -f .setup/environment-python2-cellprofiler.yml
 # CellProfiler has to be installed in a separate step because it requires
 # the JAVA_HOME environment variable set in the updated environment
-ARG CELLPROFILER_VERSION=v3.1.3
+ARG CELLPROFILER_VERSION=v3.1.8
 RUN bash -c "source activate python2 && pip install git+https://github.com/CellProfiler/CellProfiler.git@$CELLPROFILER_VERSION"
 
 # R-kernel and R-OMERO prerequisites
@@ -47,15 +47,16 @@ RUN cd /opt/java-apps && \
     curl http://www.stritt.de/files/orbit_linux_306.tar.gz | tar xvz
 
 # install rOMERO
-ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
-ARG ROMERO_VERSION=v0.4.2
+ ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
+ ENV OMERO_LIBS_DOWNLOAD=TRUE
+ARG ROMERO_VERSION=v0.4.7
 RUN cd /opt/romero && \
     curl -sf https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
     bash -c "source activate r-omero && Rscript install.R --version=$ROMERO_VERSION --quiet"
 
 # OMERO full CLI
 # This currently uses the python2 environment, should we move it to its own?
-ARG OMERO_VERSION=5.4.9
+ARG OMERO_VERSION=5.5.0
 RUN cd /opt/omero && \
     /opt/conda/envs/python2/bin/pip install -q omego && \
     /opt/conda/envs/python2/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
