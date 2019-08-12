@@ -24,6 +24,9 @@ RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
     /opt/conda/envs/r-omero/bin/Rscript -e "IRkernel::installspec(displayname='OMERO R')"
 
 # Install BeakerX
+# Necessary to instal in a separate command
+RUN conda install -c anaconda numpy
+
 RUN conda install -c conda-forge beakerx && \
     # Jupyterlab component for ipywidgets (must match jupyterlab version) \
     jupyter labextension install beakerx-jupyterlab
@@ -44,7 +47,7 @@ USER $NB_UID
 
 # install orbit
 RUN cd /opt/java-apps && \
-    curl http://www.stritt.de/files/orbit_linux_306.tar.gz | tar xvz
+    curl http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xvz
 
 # install rOMERO
  ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
