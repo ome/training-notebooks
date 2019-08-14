@@ -23,6 +23,13 @@ ADD docker/environment-r-omero.yml .setup/
 RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
     /opt/conda/envs/r-omero/bin/Rscript -e "IRkernel::installspec(displayname='OMERO R')"
 
+# Install BeakerX
+# Necessary to instal in a separate command
+RUN conda install -c anaconda numpy
+RUN conda install -c conda-forge beakerx && \
+    # Jupyterlab component for ipywidgets (must match jupyterlab version) \
+    jupyter labextension install beakerx-jupyterlab
+
 USER root
 RUN mkdir /opt/romero /opt/omero && \
     fix-permissions /opt/romero /opt/omero
