@@ -31,12 +31,55 @@ RUN conda install -c conda-forge tornado=4.5.3 beakerx && \
     jupyter labextension install beakerx-jupyterlab
 
 USER root
-RUN mkdir /opt/romero /opt/omero && \
-    fix-permissions /opt/romero /opt/omero
+RUN mkdir /opt/romero /opt/omero /opt/java-apps && \
+    fix-permissions /opt/romero /opt/omero /opt/java-apps
 # R requires these two packages at runtime
 RUN apt-get install -y -q \
     libxrender1 \
     libsm6
+
+RUN apt-get install -y -q \
+    unzip
+
+# install fiji
+RUN cd /opt/java-apps && \
+    wget https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
+    unzip fiji-linux64.zip
+RUN cd /opt/java-apps/Fiji.app/plugins && \
+    wget https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
+    unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
+
+RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
+
+
+RUN apt-get update && \
+    apt-get install -y \
+        apt-utils \
+        software-properties-common && \
+    apt-get upgrade -y
+ 
+# get Xvfb virtual X server and configure
+RUN apt-get install -y \
+        xvfb \
+        x11vnc \
+        x11-xkb-utils \
+        xfonts-100dpi \
+        xfonts-75dpi \
+        xfonts-scalable \
+        xfonts-cyrillic \
+        x11-apps \
+        libxrender1 \
+        libxtst6 \
+        libxi6 
+                    
+# Setting ENV for Xvfb and Fiji
+ENV DISPLAY :99
+ENV PATH $PATH:/opt/java-apps/Fiji.app/
+
+# Adjust start.sh
+#RUN sed -i 's/exec \$cmd/exec xvfb-run \$cmd/' /usr/local/bin/start.sh
+RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
+
 USER $NB_UID
 
 # install rOMERO
