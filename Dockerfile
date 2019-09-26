@@ -41,7 +41,7 @@ RUN apt-get install -y -q \
 RUN apt-get install -y -q \
     unzip
 
-# install fiji
+# Install FIJI and few plugins
 RUN cd /opt/java-apps && \
     wget https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
     unzip fiji-linux64.zip
@@ -50,6 +50,10 @@ RUN cd /opt/java-apps/Fiji.app/plugins && \
     unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
 
 RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
+
+# Install Orbit
+RUN cd /opt/java-apps && \
+    curl http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xvz
 
 
 RUN apt-get update && \
