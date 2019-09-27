@@ -46,10 +46,10 @@ RUN apt-get update && apt-get install -y -q \
 
 # Install FIJI and few plugins
 RUN cd /opt/java-apps && \
-    wget https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
+    wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
     unzip fiji-linux64.zip
 RUN cd /opt/java-apps/Fiji.app/plugins && \
-    wget https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
+    wget -q https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
     unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
 
 RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
@@ -62,7 +62,7 @@ RUN cd /opt/java-apps && \
 ARG ILASTIK_VERSION=ilastik-1.3.2post1-Linux.tar.bz2
 ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
 RUN cd /opt/python-apps && mkdir ilastik-release && \
-    bsdtar xjvf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
+    bsdtar -q xjvf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
 
 RUN apt-get update && \
     apt-get install -y \
