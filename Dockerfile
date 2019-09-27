@@ -31,8 +31,8 @@ RUN conda install -c conda-forge tornado=4.5.3 beakerx && \
     jupyter labextension install beakerx-jupyterlab
 
 USER root
-RUN mkdir /opt/romero /opt/omero /opt/java-apps && \
-    fix-permissions /opt/romero /opt/omero /opt/java-apps
+RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
+    fix-permissions /opt/romero /opt/omero /opt/java-apps /opt/python-apps
 # R requires these two packages at runtime
 RUN apt-get install -y -q \
     libxrender1 \
@@ -40,6 +40,9 @@ RUN apt-get install -y -q \
 
 RUN apt-get install -y -q \
     unzip
+
+RUN apt-get update && apt-get install -y -q \
+    --no-install-recommends bsdtar
 
 # Install FIJI and few plugins
 RUN cd /opt/java-apps && \
@@ -55,6 +58,11 @@ RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://s
 RUN cd /opt/java-apps && \
     curl http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xvz
 
+# Install ilastik
+ARG ILASTIK_VERSION=ilastik-1.3.2post1-Linux.tar.bz2
+ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
+RUN cd /opt/python-apps && mkdir ilastik-release && \
+    bsdtar xjvf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
 
 RUN apt-get update && \
     apt-get install -y \
