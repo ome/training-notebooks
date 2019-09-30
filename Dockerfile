@@ -56,13 +56,13 @@ RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://s
 
 # Install Orbit
 RUN cd /opt/java-apps && \
-    curl http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xvz
+    curl http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
 ARG ILASTIK_VERSION=ilastik-1.3.2post1-Linux.tar.bz2
 ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
 RUN cd /opt/python-apps && mkdir ilastik-release && \
-    bsdtar -q xjvf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
+    bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
 
 RUN apt-get update && \
     apt-get install -y \
