@@ -56,7 +56,7 @@ RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://s
 
 # Install Orbit
 RUN cd /opt/java-apps && \
-    curl http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
+    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
 ARG ILASTIK_VERSION=ilastik-1.3.2post1-Linux.tar.bz2
