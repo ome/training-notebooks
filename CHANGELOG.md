@@ -1,5 +1,5 @@
-0.5.0 (February 2019)
----------------------
+0.5.0 (October 2019)
+--------------------
 
 - Install beakerX
 - Update CellProfiler version to 3.1.8
