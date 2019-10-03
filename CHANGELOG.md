@@ -1,3 +1,24 @@
+0.5.0 (February 2019)
+---------------------
+
+- Install beakerX
+- Update CellProfiler version to 3.1.8
+- Update OMERO version to 5.5.0
+- Update rGateway version to 0.4.7
+- Add Python notebook to run a simple frap algorithm
+
+0.4.1 (February 2019)
+---------------------
+
+- Run CellProfiler notebook on 5 wells only
+
+0.4.0 (November 2018)
+---------------------
+
+- Change base image version
+- Update rGateway to 0.4.3
+- Add R notebook to segment images from idr0021
+
 0.3.0 (August 2018)
 -------------------
 
