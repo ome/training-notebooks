@@ -37,3 +37,4 @@ The notebooks in this repository are meant to exemplify how to access data in OM
 | **[idr0021 ROIs](R/idr0021_rois.ipynb)** | R | Read OMERO.table data, performs some basic statistics on it and create a plot. |
 | **[Statistics Fruit Fly](CellProfiler/statistics_fruit_fly.ipynb)** | Py | Process Images stored in OMERO using CellProfiler. |
 | **[idr0002](CellProfiler/idr0002.ipynb)** | Py | Process a plate from idr0002 using CellProfiler. |
+| **[idr0002](Python/SimpleFRAP.ipynb)** | Py | Process a dataset measuring the intensity in a named Channel within a ROI. |
