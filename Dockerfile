@@ -26,22 +26,77 @@ RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
 # Install BeakerX
 # Necessary to instal in a separate command
 RUN conda install -c anaconda numpy
-RUN conda install -c conda-forge beakerx && \
+RUN conda install -c conda-forge tornado=4.5.3 beakerx && \
     # Jupyterlab component for ipywidgets (must match jupyterlab version) \
     jupyter labextension install beakerx-jupyterlab
 
 USER root
-RUN mkdir /opt/romero /opt/omero && \
-    fix-permissions /opt/romero /opt/omero
+RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
+    fix-permissions /opt/romero /opt/omero /opt/java-apps /opt/python-apps
 # R requires these two packages at runtime
 RUN apt-get install -y -q \
     libxrender1 \
     libsm6
+
+RUN apt-get install -y -q \
+    unzip
+
+RUN apt-get update && apt-get install -y -q \
+    --no-install-recommends bsdtar
+
+# Install FIJI and few plugins
+RUN cd /opt/java-apps && \
+    wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
+    unzip fiji-linux64.zip
+RUN cd /opt/java-apps/Fiji.app/plugins && \
+    wget -q https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
+    unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
+
+RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
+
+# Install Orbit
+RUN cd /opt/java-apps && \
+    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
+
+# Install ilastik
+ARG ILASTIK_VERSION=ilastik-1.3.2post1-Linux.tar.bz2
+ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
+RUN cd /opt/python-apps && mkdir ilastik-release && \
+    bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
+
+RUN apt-get update && \
+    apt-get install -y \
+        apt-utils \
+        software-properties-common && \
+    apt-get upgrade -y
+ 
+# get Xvfb virtual X server and configure
+RUN apt-get install -y \
+        xvfb \
+        x11vnc \
+        x11-xkb-utils \
+        xfonts-100dpi \
+        xfonts-75dpi \
+        xfonts-scalable \
+        xfonts-cyrillic \
+        x11-apps \
+        libxrender1 \
+        libxtst6 \
+        libxi6 
+                    
+# Setting ENV for Xvfb and Fiji
+ENV DISPLAY :99
+ENV PATH $PATH:/opt/java-apps/Fiji.app/
+
+# Adjust start.sh
+#RUN sed -i 's/exec \$cmd/exec xvfb-run \$cmd/' /usr/local/bin/start.sh
+RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
+
 USER $NB_UID
 
 # install rOMERO
- ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
- ENV OMERO_LIBS_DOWNLOAD=TRUE
+ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
+ENV OMERO_LIBS_DOWNLOAD=TRUE
 ARG ROMERO_VERSION=v0.4.7
 RUN cd /opt/romero && \
     curl -sf https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
