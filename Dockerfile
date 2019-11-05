@@ -26,7 +26,7 @@ RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
 # Install BeakerX
 # Necessary to instal in a separate command
 RUN conda install -c anaconda numpy
-RUN conda install -c conda-forge tornado=4.5.3 beakerx && \
+RUN conda install -c conda-forge beakerx && \
     # Jupyterlab component for ipywidgets (must match jupyterlab version) \
     jupyter labextension install beakerx-jupyterlab
 
