@@ -1,3 +1,11 @@
+0.6.0 (November 2019)
+---------------------
+
+- Install Fiji
+- Install ilastik version 1.3.2post1
+- Install Orbit
+- Add notebook for Fiji, ilastik and Orbit
+
 0.5.1 (October 2019)
 --------------------
 
