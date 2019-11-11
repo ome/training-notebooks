@@ -8,9 +8,13 @@ To build the image run, in this repository:
 
 The image contains the dependencies required to connect to OMERO 5.5.x.
 
-To start the image:
+To start the image in Jupyter:
 
     $ docker run -it  -p 8888:8888 training-notebooks
+
+To start the image in Jupyterlab:
+
+    $ docker run -it  -p 8888:8888 -e JUPYTER_ENABLE_LAB=true training-notebooks
 
 To update a notebook while this is running:
 In another terminal, get the container ID and copy a notebook e.g. idr0002.ipynb
