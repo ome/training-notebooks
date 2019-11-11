@@ -14,7 +14,7 @@ To start the image in Jupyter:
 
 To start the image in Jupyterlab:
 
-    $ docker run -it  -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes training-notebooks
+    $ docker run -it  -p 8888:8888 -e JUPYTER_ENABLE_LAB=true training-notebooks
 
 To update a notebook while this is running:
 In another terminal, get the container ID and copy a notebook e.g. idr0002.ipynb
