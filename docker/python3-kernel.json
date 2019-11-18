@@ -1,0 +1,9 @@
+{
+ "display_name": "OMERO Python 3",
+ "language": "python",
+ "argv": [
+  "/bin/bash",
+  "-c",
+  "source activate python3 && python -m ipykernel_launcher -f {connection_file}"
+ ]
+}
