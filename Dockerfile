@@ -1,9 +1,9 @@
-FROM imagedata/jupyter-docker:0.9.2
+FROM imagedata/jupyter-docker:0.10.0
 MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 
 # create a python2 environment (for OMERO-PY compatibility)
 ADD docker/environment-python3-omero.yml .setup/
-RUN conda env create -n python3 -q -f .setup/environment-python3-omero.yml
+RUN conda env update -n python3 -q -f .setup/environment-python3-omero.yml
 # Don't use this:
 # /opt/conda/envs/python2/bin/python -m ipykernel install --user --name python3 --display-name 'OMERO Python 3'
 # because it doesn't activate conda environment variables
@@ -106,8 +106,8 @@ RUN cd /opt/romero && \
 # This currently uses the python2 environment, should we move it to its own?
 ARG OMERO_VERSION=5.5.0
 RUN cd /opt/omero && \
-    /opt/conda/envs/python2/bin/pip install -q omego && \
-    /opt/conda/envs/python2/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
+    /opt/conda/envs/python3/bin/pip install -q omego && \
+    /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
     rm OMERO.server-*.zip
 ADD docker/omero-bin.sh /usr/local/bin/omero
 
