@@ -1,22 +1,22 @@
-FROM imagedata/jupyter-docker:0.9.2
+FROM imagedata/jupyter-docker:0.10.0
 MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 
 # create a python2 environment (for OMERO-PY compatibility)
-ADD docker/environment-python2-omero.yml .setup/
-RUN conda env update -n python2 -q -f .setup/environment-python2-omero.yml
+ADD docker/environment-python3-omero.yml .setup/
+RUN conda env update -n python3 -q -f .setup/environment-python3-omero.yml
 # Don't use this:
-# /opt/conda/envs/python2/bin/python -m ipykernel install --user --name python2 --display-name 'OMERO Python 2'
+# /opt/conda/envs/python2/bin/python -m ipykernel install --user --name python3 --display-name 'OMERO Python 3'
 # because it doesn't activate conda environment variables
-COPY --chown=1000:100 docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python2/
-COPY --chown=1000:100 docker/python2-kernel.json .local/share/jupyter/kernels/python2/kernel.json
+COPY --chown=1000:100 docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python3/
+COPY --chown=1000:100 docker/python3-kernel.json .local/share/jupyter/kernels/python3/kernel.json
 
-# Cell Profiler (add to the Python2 environment)
-ADD docker/environment-python2-cellprofiler.yml .setup/
-RUN conda env update -n python2 -q -f .setup/environment-python2-cellprofiler.yml
+# Cell Profiler (add to the Python3 environment)
+# ADD docker/environment-python2-cellprofiler.yml .setup/
+# RUN conda env update -n python3 -q -f .setup/environment-python2-cellprofiler.yml
 # CellProfiler has to be installed in a separate step because it requires
 # the JAVA_HOME environment variable set in the updated environment
-ARG CELLPROFILER_VERSION=v3.1.8
-RUN bash -c "source activate python2 && pip install git+https://github.com/CellProfiler/CellProfiler.git@$CELLPROFILER_VERSION"
+# ARG CELLPROFILER_VERSION=v3.1.8
+# RUN bash -c "source activate python3 && pip install git+https://github.com/CellProfiler/CellProfiler.git@$CELLPROFILER_VERSION"
 
 # R-kernel and R-OMERO prerequisites
 ADD docker/environment-r-omero.yml .setup/
@@ -106,8 +106,8 @@ RUN cd /opt/romero && \
 # This currently uses the python2 environment, should we move it to its own?
 ARG OMERO_VERSION=5.5.0
 RUN cd /opt/omero && \
-    /opt/conda/envs/python2/bin/pip install -q omego && \
-    /opt/conda/envs/python2/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
+    /opt/conda/envs/python3/bin/pip install -q omego && \
+    /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
     rm OMERO.server-*.zip
 ADD docker/omero-bin.sh /usr/local/bin/omero
 
