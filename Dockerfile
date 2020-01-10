@@ -59,7 +59,7 @@ RUN cd /opt/java-apps && \
     curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
-ARG ILASTIK_VERSION=ilastik-1.3.2post1-Linux.tar.bz2
+ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
 ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
 RUN cd /opt/python-apps && mkdir ilastik-release && \
     bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
