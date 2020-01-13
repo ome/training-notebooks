@@ -7,8 +7,11 @@ RUN conda env update -n python3 -q -f .setup/environment-python3-omero.yml
 # Don't use this:
 # /opt/conda/envs/python2/bin/python -m ipykernel install --user --name python3 --display-name 'OMERO Python 3'
 # because it doesn't activate conda environment variables
-COPY --chown=1000:100 docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python3/
-COPY --chown=1000:100 docker/python3-kernel.json .local/share/jupyter/kernels/python3/kernel.json
+COPY docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python3/
+COPY docker/python3-kernel.json .local/share/jupyter/kernels/python3/kernel.json
+USER root
+RUN chown -R 1000:100 .local/share/jupyter/kernels/python3/
+USER $NB_UID
 
 # Cell Profiler (add to the Python3 environment)
 # ADD docker/environment-python2-cellprofiler.yml .setup/
@@ -45,14 +48,14 @@ RUN apt-get update && apt-get install -y -q \
     --no-install-recommends bsdtar
 
 # Install FIJI and few plugins
-#RUN cd /opt/java-apps && \
-#    wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
-#    unzip fiji-linux64.zip
-#RUN cd /opt/java-apps/Fiji.app/plugins && \
-#    wget -q https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
-#    unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
-#
-#RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
+RUN cd /opt/java-apps && \
+    wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
+    unzip fiji-linux64.zip
+RUN cd /opt/java-apps/Fiji.app/plugins && \
+    wget -q https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
+    unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
+
+RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
 
 # Install Orbit
 #RUN cd /opt/java-apps && \
@@ -85,14 +88,14 @@ RUN apt-get install -y \
         libxi6 
                     
 # Setting ENV for Xvfb and Fiji
-#ENV DISPLAY :99
-#ENV PATH $PATH:/opt/java-apps/Fiji.app/
+ENV DISPLAY :99
+ENV PATH $PATH:/opt/java-apps/Fiji.app/
 
 # Adjust start.sh
 #RUN sed -i 's/exec \$cmd/exec xvfb-run \$cmd/' /usr/local/bin/start.sh
-#RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
+RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
 
-#USER $NB_UID
+USER $NB_UID
 
 # install rOMERO
 #ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
@@ -104,12 +107,14 @@ RUN apt-get install -y \
 
 # OMERO full CLI
 # This currently uses the python2 environment, should we move it to its own?
-#ARG OMERO_VERSION=5.5.0
-#RUN cd /opt/omero && \
-#    /opt/conda/envs/python3/bin/pip install -q omego && \
-#    /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
-#    rm OMERO.server-*.zip
-#ADD docker/omero-bin.sh /usr/local/bin/omero
-#
+ARG OMERO_VERSION=5.5.0
+RUN cd /opt/omero && \
+    /opt/conda/envs/python3/bin/pip install -q omego && \
+    /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
+    rm OMERO.server-*.zip
+ADD docker/omero-bin.sh /usr/local/bin/omero
+
 # Clone the source git repo into notebooks (keep this at the end of the file)
-COPY --chown=1000:100 . notebooks
+COPY . notebooks
+USER root
+RUN chown -R 1000:100 notebooks
