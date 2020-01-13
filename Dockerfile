@@ -19,9 +19,9 @@ COPY --chown=1000:100 docker/python3-kernel.json .local/share/jupyter/kernels/py
 # RUN bash -c "source activate python3 && pip install git+https://github.com/CellProfiler/CellProfiler.git@$CELLPROFILER_VERSION"
 
 # R-kernel and R-OMERO prerequisites
-ADD docker/environment-r-omero.yml .setup/
-RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
-    /opt/conda/envs/r-omero/bin/Rscript -e "IRkernel::installspec(displayname='OMERO R')"
+#ADD docker/environment-r-omero.yml .setup/
+#RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
+#    /opt/conda/envs/r-omero/bin/Rscript -e "IRkernel::installspec(displayname='OMERO R')"
 
 # Install BeakerX
 # Necessary to instal in a separate command
@@ -45,18 +45,18 @@ RUN apt-get update && apt-get install -y -q \
     --no-install-recommends bsdtar
 
 # Install FIJI and few plugins
-RUN cd /opt/java-apps && \
-    wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
-    unzip fiji-linux64.zip
-RUN cd /opt/java-apps/Fiji.app/plugins && \
-    wget -q https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
-    unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
-
-RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
+#RUN cd /opt/java-apps && \
+#    wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
+#    unzip fiji-linux64.zip
+#RUN cd /opt/java-apps/Fiji.app/plugins && \
+#    wget -q https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
+#    unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
+#
+#RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
 
 # Install Orbit
-RUN cd /opt/java-apps && \
-    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
+#RUN cd /opt/java-apps && \
+#    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
 ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
@@ -85,31 +85,31 @@ RUN apt-get install -y \
         libxi6 
                     
 # Setting ENV for Xvfb and Fiji
-ENV DISPLAY :99
-ENV PATH $PATH:/opt/java-apps/Fiji.app/
+#ENV DISPLAY :99
+#ENV PATH $PATH:/opt/java-apps/Fiji.app/
 
 # Adjust start.sh
 #RUN sed -i 's/exec \$cmd/exec xvfb-run \$cmd/' /usr/local/bin/start.sh
-RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
+#RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
 
-USER $NB_UID
+#USER $NB_UID
 
 # install rOMERO
-ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
-ENV OMERO_LIBS_DOWNLOAD=TRUE
-ARG ROMERO_VERSION=v0.4.7
-RUN cd /opt/romero && \
-    curl -sf https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
-    bash -c "source activate r-omero && Rscript install.R --version=$ROMERO_VERSION --quiet"
+#ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
+#ENV OMERO_LIBS_DOWNLOAD=TRUE
+#ARG ROMERO_VERSION=v0.4.7
+#RUN cd /opt/romero && \
+#    curl -sf https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
+#    bash -c "source activate r-omero && Rscript install.R --version=$ROMERO_VERSION --quiet"
 
 # OMERO full CLI
 # This currently uses the python2 environment, should we move it to its own?
-ARG OMERO_VERSION=5.5.0
-RUN cd /opt/omero && \
-    /opt/conda/envs/python3/bin/pip install -q omego && \
-    /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
-    rm OMERO.server-*.zip
-ADD docker/omero-bin.sh /usr/local/bin/omero
-
+#ARG OMERO_VERSION=5.5.0
+#RUN cd /opt/omero && \
+#    /opt/conda/envs/python3/bin/pip install -q omego && \
+#    /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
+#    rm OMERO.server-*.zip
+#ADD docker/omero-bin.sh /usr/local/bin/omero
+#
 # Clone the source git repo into notebooks (keep this at the end of the file)
 COPY --chown=1000:100 . notebooks
