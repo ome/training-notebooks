@@ -7,11 +7,8 @@ RUN conda env update -n python3 -q -f .setup/environment-python3-omero.yml
 # Don't use this:
 # /opt/conda/envs/python2/bin/python -m ipykernel install --user --name python3 --display-name 'OMERO Python 3'
 # because it doesn't activate conda environment variables
-COPY docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python3/
-COPY docker/python3-kernel.json .local/share/jupyter/kernels/python3/kernel.json
-USER root
-RUN chown -R 1000:100 .local/share/jupyter/kernels/python3/
-USER $NB_UID
+COPY --chown=1000:100 docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python3/
+COPY --chown=1000:100 docker/python3-kernel.json .local/share/jupyter/kernels/python3/kernel.json
 
 # Cell Profiler (add to the Python3 environment)
 # ADD docker/environment-python2-cellprofiler.yml .setup/
@@ -115,6 +112,4 @@ RUN cd /opt/omero && \
 ADD docker/omero-bin.sh /usr/local/bin/omero
 
 # Clone the source git repo into notebooks (keep this at the end of the file)
-COPY . notebooks
-USER root
-RUN chown -R 1000:100 notebooks
+COPY --chown=1000:100 . notebooks
