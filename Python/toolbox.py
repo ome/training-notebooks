@@ -83,9 +83,9 @@ def get_project(connection, project_id):
 
 def get_image_shape(image):
     try:
-        image_shape = (image.getSizeT(),
-                       image.getSizeZ(),
+        image_shape = (image.getSizeZ(),
                        image.getSizeC(),
+                       image.getSizeT(),
                        image.getSizeX(),
                        image.getSizeY())
     except Exception as e:
@@ -118,9 +118,9 @@ def get_5d_stack(image):
 
     nr_planes = reduce(mul, image_shape[:-2])
 
-    zct_list = list(product(range(image_shape[1]),
-                            range(image_shape[2]),
-                            range(image_shape[0])))
+    zct_list = list(product(range(image_shape[0]),
+                            range(image_shape[1]),
+                            range(image_shape[2])))
     pixels = image.getPrimaryPixels()
     pixels_type = pixels.getPixelsType()
     if pixels_type.value == 'float':
@@ -309,7 +309,7 @@ def _create_column(data_type, kwargs):
     return column_class(**kwargs)
 
 
-def _create_table(column_names, columns_descriptions, values):
+def _create_table(column_names, colu20mns_descriptions, values):
     columns = list()
     for cn, cd, v in zip(column_names, columns_descriptions, values):
         if isinstance(v[0], str):
@@ -496,7 +496,7 @@ def link_annotation(object_wrapper, annotation_wrapper):
 
 ###### Image analysis functions #######
 
-def _segment_single_channel(channel, min_distance, sigma, method, hysteresis_levels):
+def segment_channel(channel, min_distance, sigma, method, hysteresis_levels):
     """Segment a channel (3D numpy array)"""
     threshold = threshold_otsu(channel)
 
@@ -536,20 +536,7 @@ def _segment_single_channel(channel, min_distance, sigma, method, hysteresis_lev
     return label(cleared)
 
 
-def segment_image(image, min_distance=20, sigma=(1, 2, 2), method='local_max', hysteresis_levels=(.6, .9)):
-    """Segment an image and return a labels object"""
-    # We create an empty array to store the output
-    labels_image = np.zeros(image.shape, dtype=np.uint16)
-    for c in range(image.shape[2]):  # TODO: Deal with Time here
-        labels_image[..., c, :, :] = _segment_single_channel(image[0, :, c, :, :],
-                                                             min_distance=min_distance,
-                                                             sigma=sigma,
-                                                             method=method,
-                                                             hysteresis_levels=hysteresis_levels)
-    return labels_image
-
-
-def _compute_channel_spots_properties(channel, label_channel, remove_center_cross, pixel_size=None):
+def compute_channel_spots_properties(channel, label_channel, pixel_size=None):
     """Analyzes and extracts the properties of a single channel"""
 
     ch_properties = list()
@@ -565,36 +552,11 @@ def _compute_channel_spots_properties(channel, label_channel, remove_center_cros
                               'mean_intensity': region.mean_intensity,
                               'min_intensity': region.min_intensity
                               })
-    if remove_center_cross:  # Argolight spots pattern contains a central cross that we might want to remove
-        largest_area = 0
-        largest_region = None
-        for region in ch_properties:
-            if region['area'] > largest_area:  # We assume the cross is the largest area
-                largest_area = region['area']
-                largest_region = region
-        if largest_region:
-            ch_properties.remove(largest_region)
     ch_positions = np.array([x['weighted_centroid'] for x in ch_properties])
     if pixel_size:
         ch_positions = ch_positions[0:] * pixel_size
 
     return ch_properties, ch_positions
-
-
-def compute_spots_properties(image, labels, remove_center_cross=True):
-    """Computes a number of properties for the PSF-like spots found on an image provided they are segmented"""
-    # TODO: Verify dimensions of image and labels are the same
-    properties = list()
-    positions = list()
-
-    for c in range(image.shape[2]):  # TODO: Deal with Time here
-        pr, pos = _compute_channel_spots_properties(image[0, :, c, :, :],
-                                                    labels[0, :, c, :, :],
-                                                    remove_center_cross=remove_center_cross)
-        properties.append(pr)
-        positions.append(pos)
-
-    return properties, positions
 
 
 def compute_distances_matrix(positions, sigma, pixel_size=None):
