@@ -3,8 +3,8 @@
 import os
 import numpy as np
 import subprocess
-import omero
 from omero.gateway import BlitzGateway
+from getpass import getpass
 
 ILASTIK_PATH = '/home/julio/Apps/ilastik-1.3.2post1-Linux/run_ilastik.sh'
 DIRECTORY = '/run/media/julio/DATA/Quentin/training_dataset/numpy_arrays'
@@ -14,8 +14,8 @@ INPUT_SUBFIXES = ['DAPI.npy', 'DAPI_Ch1.npy', 'DAPI_Ch2.npy', 'DAPI_Ch3.npy']
 
 HOST = 'localhost'
 PORT = 4064
-USER = 'facility_staff_1'
-PW = 'facility_staff_1_pw'
+USER = input('Username:')
+PW = getpass()
 DATASET_ID = 251
 OUTPUT_SUBFIX = '_Probabilities.npy'
 
