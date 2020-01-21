@@ -646,12 +646,13 @@ def compute_distances_matrix(positions, sigma, pixel_size=None, remove_MCN=False
         for index_a, (p, d) in enumerate(zip(positions[a], distances_matrix)):
             if d.min() < sigma:
                 # We remove the mutual closest neighbours
-                # if remove_MCN:
-
-                pairwise_distances['coord_of_A'].append(tuple(p))
-                pairwise_distances['dist_3d'].append(d.min())
-                pairwise_distances['index_of_A'].append(index_a)
-                pairwise_distances['index_of_B'].append(d.argmin())
+                if remove_MCN and distances_matrix[:, d.argmin()].argmin() != index_a:
+                    continue
+                else:
+                    pairwise_distances['coord_of_A'].append(tuple(p))
+                    pairwise_distances['dist_3d'].append(d.min())
+                    pairwise_distances['index_of_A'].append(index_a)
+                    pairwise_distances['index_of_B'].append(d.argmin())
 
         distances.append(pairwise_distances)
 
