@@ -112,15 +112,20 @@ def get_pixel_units(image):
     return pixel_size_units
 
 
+def get_plane(image, plane):
+    pass
+
+
 def get_5d_stack(image):
-    # We will further work with stacks of the shape TZCXY
+    # We will further work with stacks of the shape ZCTXY
     image_shape = get_image_shape(image)
 
-    nr_planes = reduce(mul, image_shape[:-2])
+    nr_planes = image_shape[0] * image_shape[1] * image_shape[2]
 
     zct_list = list(product(range(image_shape[0]),
                             range(image_shape[1]),
                             range(image_shape[2])))
+
     pixels = image.getPrimaryPixels()
     pixels_type = pixels.getPixelsType()
     if pixels_type.value == 'float':
@@ -136,7 +141,7 @@ def get_5d_stack(image):
     return stack
 
 
-# Creating projects and datasets
+############### Creating projects and datasets #####################
 
 def create_project(connection, project_name):
     new_project = gw.ProjectWrapper(connection)
@@ -161,7 +166,7 @@ def create_dataset(connection, dataset_name, dataset_description=None, parent_pr
     return new_dataset
 
 
-# Deleting data
+############################ Deleting data ###############################
 
 def _delete_object(connection, object_type, objects, delete_annotations, delete_children, wait, callback=None):
     if not isinstance(objects, list) and not isinstance(object, int):
@@ -554,6 +559,7 @@ def compute_channel_spots_properties(channel, label_channel, pixel_size=None):
                               })
     ch_positions = np.array([x['weighted_centroid'] for x in ch_properties])
     if pixel_size:
+        pixel_size = (pixel_size[2], pixel_size[0], pixel_size[1])  # Reorder pixel sizes to zxy
         ch_positions = ch_positions[0:] * pixel_size
 
     return ch_properties, ch_positions
@@ -587,6 +593,7 @@ def compute_distances_matrix(positions, sigma, pixel_size=None):
         pixel_size = np.array((1, 1, 1))
         # TODO: log warning
     else:
+        pixel_size = (pixel_size[2], pixel_size[0], pixel_size[1])  # Reorder pixel sizes to zxy
         pixel_size = np.array(pixel_size)
 
     for a, b in channel_permutations:
@@ -597,12 +604,14 @@ def compute_distances_matrix(positions, sigma, pixel_size=None):
         pairwise_distances = {'channels': (a, b),
                               'coord_of_A': list(),
                               'dist_3d': list(),
+                              'index_of_A': list(),
                               'index_of_B': list()
                               }
-        for p, d in zip(positions[a], distances_matrix):
+        for index_a, (p, d) in enumerate(zip(positions[a], distances_matrix)):
             if d.min() < sigma:
                 pairwise_distances['coord_of_A'].append(tuple(p))
                 pairwise_distances['dist_3d'].append(d.min())
+                pairwise_distances['index_of_A'].append(index_a)
                 pairwise_distances['index_of_B'].append(d.argmin())
 
         distances.append(pairwise_distances)
