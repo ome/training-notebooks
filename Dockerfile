@@ -104,7 +104,7 @@ USER $NB_UID
 
 # OMERO full CLI
 # This currently uses the python2 environment, should we move it to its own?
-ARG OMERO_VERSION=5.5.0
+ARG OMERO_VERSION=5.6.0
 RUN cd /opt/omero && \
     /opt/conda/envs/python3/bin/pip install -q omego && \
     /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
