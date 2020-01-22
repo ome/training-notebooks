@@ -350,7 +350,7 @@ def _create_column(data_type, kwargs):
     return column_class(**kwargs)
 
 
-def _create_table(column_names, colu20mns_descriptions, values):
+def _create_table(column_names, columns_descriptions, values):
     columns = list()
     for cn, cd, v in zip(column_names, columns_descriptions, values):
         if isinstance(v[0], str):
@@ -393,6 +393,11 @@ def create_annotation_table(connection, table_name, column_names, column_descrip
     file_ann.setFile(model.OriginalFileI(original_file.id.val, False))  # TODO: try to get this with a wrapper
     file_ann.save()
     return file_ann
+
+
+def create_roi(connection, image, shapes):
+    """A pass through to create a roi into an image"""
+    return _create_roi(connection, image, shapes)
 
 
 def _create_roi(connection, image, shapes):
