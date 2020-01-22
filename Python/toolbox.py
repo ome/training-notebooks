@@ -408,7 +408,7 @@ def _create_roi(connection, image, shapes):
     for shape in shapes:
         roi.addShape(shape)
     # Save the ROI (saves any linked shapes too)
-    return connection.updateService.saveAndReturnObject(roi)
+    return connection.getUpdateService().saveAndReturnObject(roi)
 
 
 def _rgba_to_int(red, green, blue, alpha=255):
