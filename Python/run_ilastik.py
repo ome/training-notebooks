@@ -50,7 +50,7 @@ def run_ilastik(ilastik_path, directory, models, subfixes):
                    '--export_source=Probabilities',
                    '--output_format=numpy',
                    # f'--output_filename_format={{dataset_dir}}/{{nickname}}_Probabilities.npy',
-                   '--output_axis_order=zctyx',
+                   '--output_axis_order=zctxy',
                    i]
             try:
                 subprocess.run(cmd, check=True, stdout=subprocess.PIPE).stdout
