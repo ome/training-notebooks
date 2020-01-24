@@ -12,11 +12,11 @@ DIRECTORY2 = '/media/sf_DATA/Quentin/training_dataset/numpy_arrays'
 MODELS = ['Nuclei_model_v3.ilp', 'Ch1_model_v3.ilp', 'Ch2_model_v3.ilp', 'Ch2_model_v3.ilp']
 INPUT_SUBFIXES = ['DAPI.npy', 'DAPI_Ch1.npy', 'DAPI_Ch2.npy', 'DAPI_Ch3.npy']
 
-HOST = 'localhost'
+HOST = 'workshop.openmicroscopy.org'
 PORT = 4064
 USER = input('Username:')
 PW = getpass()
-DATASET_ID = 251
+DATASET_ID = 6206
 OUTPUT_SUBFIX = '_Probabilities.npy'
 
 
@@ -77,15 +77,15 @@ def import_np_arrays(host, port, user, pw, dataset_id, directory, subfix):
             omero_name = file
             print(f'Saving Probabilities as an Image in OMERO as {omero_name}')
             output_data = np.load(os.path.join(directory, file))
-            print(f'old shape = {output_data.shape}')
-            if len(output_data.shape) == 4:
-                output_data = output_data.reshape(output_data.shape[:2] + (1,) + output_data.shape[2:])
-            print(f'new shape = {output_data.shape}')
+            # print(f'old shape = {output_data.shape}')
+            # if len(output_data.shape) == 4:
+            #     output_data = output_data.reshape(output_data.shape[:2] + (1,) + output_data.shape[2:])
+            # print(f'new shape = {output_data.shape}')
             desc = f'ilastik probabilities'
-            conn.createImageFromNumpySeq(zctPlanes=plane_gen(output_data[1]),
+            conn.createImageFromNumpySeq(zctPlanes=plane_gen(output_data),
                                          imageName=omero_name,
-                                         sizeZ=output_data.shape[1],
-                                         sizeC=output_data.shape[0],
+                                         sizeZ=output_data.shape[0],
+                                         sizeC=output_data.shape[1],
                                          sizeT=output_data.shape[2],
                                          description=desc,
                                          dataset=dataset)

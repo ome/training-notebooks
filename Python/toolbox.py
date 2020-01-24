@@ -558,8 +558,8 @@ def segment_channel(channel, min_distance, sigma, method, hysteresis_levels):
 
     if method == 'hysteresis':  # We may try here hysteresis threshold
         thresholded = apply_hysteresis_threshold(gauss_filtered,
-                                                 low=threshold * hysteresis_levels[0],
-                                                 high=threshold * hysteresis_levels[1]
+                                                 low=hysteresis_levels[0],
+                                                 high=hysteresis_levels[1]
                                                  )
 
     elif method == 'local_max':  # We are applying a local maxima algorithm
@@ -593,21 +593,24 @@ def compute_channel_spots_properties(channel, label_channel, pixel_size=None):
     for region in regions:
         ch_properties.append({'label': region.label,
                               'area': region.area,
-                              'centroid': region.centroid,
-                              'weighted_centroid': region.weighted_centroid,
+                              # XY coordinates are swapped in a numpy array compared to an image
+                              'centroid': (region.centroid[0], region.centroid[1], region.centroid[1]),
+                              'weighted_centroid': (region.weighted_centroid[0], region.weighted_centroid[2], region.weighted_centroid[1]),
                               'max_intensity': region.max_intensity,
                               'mean_intensity': region.mean_intensity,
                               'min_intensity': region.min_intensity
                               })
-    ch_positions = np.array([x['weighted_centroid'] for x in ch_properties])
-    if pixel_size:
-        pixel_size = (pixel_size[2], pixel_size[0], pixel_size[1])  # Reorder pixel sizes to zxy
-        ch_positions = ch_positions[0:] * pixel_size
+    # # XY coordinates are swapped in a numpy array compared to an image
+    # # TODO: fix this in a better way
+    # ch_positions = np.array([(x['weighted_centroid'][0], x['weighted_centroid'][2], x['weighted_centroid'][1]) for x in ch_properties])
+    # if pixel_size:
+    #     pixel_size = (pixel_size[2], pixel_size[0], pixel_size[1])  # Reorder pixel sizes to zxy
+    #     ch_positions = ch_positions[0:] * pixel_size
 
-    return ch_properties, ch_positions
+    return ch_properties  #, ch_positions
 
 
-def compute_distances_matrix(positions, sigma, pixel_size=None, remove_MCN=False):
+def compute_distances_matrix(positions, sigma, pixel_size=None, remove_mcn=False):
     """Calculates Mutual Closest Neighbour distances between all channels and returns the values as
     a list of tuples where the first element is a tuple with the channel combination (ch_A, ch_B) and the second is
     a list of pairwise measurements where, for every spot s in ch_A:
@@ -635,7 +638,7 @@ def compute_distances_matrix(positions, sigma, pixel_size=None, remove_MCN=False
         pixel_size = np.array((1, 1, 1))
         # TODO: log warning
     else:
-        pixel_size = (pixel_size[2], pixel_size[0], pixel_size[1])  # Reorder pixel sizes to zxy
+        # pixel_size = (pixel_size[2],⎄ pixel_size[0], pixel_size[1])  # Reorder pixel sizes to zxy
         pixel_size = np.array(pixel_size)
 
     for a, b in channel_permutations:
@@ -644,21 +647,21 @@ def compute_distances_matrix(positions, sigma, pixel_size=None, remove_MCN=False
         distances_matrix = cdist(positions[a], positions[b], w=pixel_size)
 
         pairwise_distances = {'channels': (a, b),
-                              'coord_of_A': list(),
+                              'coord_A': list(),
                               'dist_3d': list(),
-                              'index_of_A': list(),
-                              'index_of_B': list()
+                              'index_A': list(),
+                              'index_B': list()
                               }
         for index_a, (p, d) in enumerate(zip(positions[a], distances_matrix)):
             if d.min() < sigma:
                 # We remove the mutual closest neighbours
-                if remove_MCN and distances_matrix[:, d.argmin()].argmin() != index_a:
+                if remove_mcn and distances_matrix[:, d.argmin()].argmin() != index_a:
                     continue
                 else:
-                    pairwise_distances['coord_of_A'].append(tuple(p))
+                    pairwise_distances['coord_A'].append(tuple(p))
                     pairwise_distances['dist_3d'].append(d.min())
-                    pairwise_distances['index_of_A'].append(index_a)
-                    pairwise_distances['index_of_B'].append(d.argmin())
+                    pairwise_distances['index_A'].append(index_a)
+                    pairwise_distances['index_B'].append(d.argmin())
 
         distances.append(pairwise_distances)
 
