@@ -1,3 +1,8 @@
+0.7.0 (December 2019)
+---------------------
+
+- Update environment and notebook to work with Python 3
+
 0.6.1 (November 2019)
 ---------------------
 
