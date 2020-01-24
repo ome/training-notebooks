@@ -1,3 +1,5 @@
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/juliomateoslangerak/training-notebooks.git/Finding_spots)
+
 # training-notebooks
 
 A set of Notebooks to demonstrate how to access the images and metadata from OMERO.
