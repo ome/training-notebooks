@@ -4,19 +4,14 @@ from omero import model
 from omero.model import enums, LengthI
 from omero import grid
 from omero import rtypes
-import numpy as np
-from operator import mul
 from itertools import product
-from functools import reduce
 from json import dumps
 from random import choice
 from string import ascii_letters
-import math
-import struct
 from skimage.filters import threshold_otsu, apply_hysteresis_threshold, gaussian
 from skimage.segmentation import clear_border
 from skimage.measure import label, regionprops
-from skimage.morphology import closing, square, cube, octahedron, ball
+from skimage.morphology import closing, cube
 from skimage.feature import peak_local_max
 from scipy.spatial.distance import cdist
 import numpy as np
@@ -113,10 +108,6 @@ def get_pixel_units(image):
     return pixel_size_units
 
 
-def get_plane(image, plane):
-    pass
-
-
 def get_intensities(image, z_range=None, c_range=None, t_range=None, x_range=None, y_range=None):
     """Returns a numpy array containing the intensity values of the image
     Returns an array with dimensions arranged as zctxy
@@ -203,61 +194,7 @@ def create_dataset(connection, dataset_name, dataset_description=None, parent_pr
     return new_dataset
 
 
-############################ Deleting data ###############################
-
-def _delete_object(connection, object_type, objects, delete_annotations, delete_children, wait, callback=None):
-    if not isinstance(objects, list) and not isinstance(object, int):
-        obj_ids = [objects.getId()]
-    elif not isinstance(objects, list):
-        obj_ids = [objects]
-    elif isinstance(objects[0], int):
-        obj_ids = objects
-    else:
-        obj_ids = [o.getId() for o in objects]
-
-    try:
-        connection.deleteObjects(object_type,
-                                 obj_ids=obj_ids,
-                                 deleteAnns=delete_annotations,
-                                 deleteChildren=delete_children,
-                                 wait=wait)
-        return True
-    except Exception as e:
-        print(e)
-        return False
-
-
-def delete_project(connection, projects, delete_annotations=False, delete_children=False):
-    _delete_object(connection=connection,
-                   object_type="Project",
-                   objects=projects,
-                   delete_annotations=delete_annotations,
-                   delete_children=delete_children,
-                   wait=False)
-
-  # Retrieve callback and wait until delete completes
-
-# # This is not necessary for the Delete to complete. Can be used
-# # if you want to know when delete is finished or if there were any errors
-# handle = conn.deleteObjects("Project", [project_id])
-# cb = omero.callbacks.CmdCallbackI(conn.c, handle)
-# print "Deleting, please wait."
-# while not cb.block(500):
-#     print "."
-# err = isinstance(cb.getResponse(), omero.cmd.ERR)
-# print "Error?", err
-# if err:
-#     print cb.getResponse()
-# cb.close(True)      # close handle too
-
-
-# Getting information on projects and datasets
-
-def get_all_projects(connection, opts={'order_by': 'loser(obj.name)'}):
-    projects = connection.getObjects("Project", opts=opts)
-
-    return projects
-
+############### Getting information on projects and datasets ###############
 
 def get_project_datasets(project):
     datasets = project.listChildren()
@@ -267,18 +204,6 @@ def get_project_datasets(project):
 
 def get_dataset_images(dataset):
     images = dataset.listChildren()
-
-    return images
-
-
-def get_orphan_datasets(connection):
-    datasets = connection.getObjects("Dataset", opts={'orphaned': True})
-
-    return datasets
-
-
-def get_orphan_images(connection):
-    images = connection.getObjects("Image", opts={'orphaned': True})
 
     return images
 
@@ -434,7 +359,6 @@ def _set_shape_properties(shape, name=None,
     shape.setFillColor(rtypes.rint(_rgba_to_int(*fill_color)))
     shape.setStrokeColor(rtypes.rint(_rgba_to_int(*stroke_color)))
     shape.setStrokeWidth(LengthI(stroke_width, enums.UnitsLength.PIXEL))
-    # shape.setStrokeWidth(model.LengthI(stroke_width, model.enums.UnitsLength.PIXEL))
 
 
 def create_shape_point(x_pos, y_pos, z_pos, t_pos, point_name=None):
@@ -600,14 +524,8 @@ def compute_channel_spots_properties(channel, label_channel, pixel_size=None):
                               'mean_intensity': region.mean_intensity,
                               'min_intensity': region.min_intensity
                               })
-    # # XY coordinates are swapped in a numpy array compared to an image
-    # # TODO: fix this in a better way
-    # ch_positions = np.array([(x['weighted_centroid'][0], x['weighted_centroid'][2], x['weighted_centroid'][1]) for x in ch_properties])
-    # if pixel_size:
-    #     pixel_size = (pixel_size[2], pixel_size[0], pixel_size[1])  # Reorder pixel sizes to zxy
-    #     ch_positions = ch_positions[0:] * pixel_size
 
-    return ch_properties  #, ch_positions
+    return ch_properties
 
 
 def compute_distances_matrix(positions, sigma, pixel_size=None, remove_mcn=False):
@@ -638,7 +556,6 @@ def compute_distances_matrix(positions, sigma, pixel_size=None, remove_mcn=False
         pixel_size = np.array((1, 1, 1))
         # TODO: log warning
     else:
-        # pixel_size = (pixel_size[2],⎄ pixel_size[0], pixel_size[1])  # Reorder pixel sizes to zxy
         pixel_size = np.array(pixel_size)
 
     for a, b in channel_permutations:
