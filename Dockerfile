@@ -19,9 +19,9 @@ COPY --chown=1000:100 docker/python3-kernel.json .local/share/jupyter/kernels/py
 # RUN bash -c "source activate python3 && pip install git+https://github.com/CellProfiler/CellProfiler.git@$CELLPROFILER_VERSION"
 
 # R-kernel and R-OMERO prerequisites
-ADD docker/environment-r-omero.yml .setup/
-RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
-    /opt/conda/envs/r-omero/bin/Rscript -e "IRkernel::installspec(displayname='OMERO R')"
+#ADD docker/environment-r-omero.yml .setup/
+#RUN conda env update -n r-omero -q -f .setup/environment-r-omero.yml && \
+#    /opt/conda/envs/r-omero/bin/Rscript -e "IRkernel::installspec(displayname='OMERO R')"
 
 # Install BeakerX
 # Necessary to instal in a separate command
@@ -55,8 +55,8 @@ RUN cd /opt/java-apps/Fiji.app/plugins && \
 RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
 
 # Install Orbit
-RUN cd /opt/java-apps && \
-    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
+#RUN cd /opt/java-apps && \
+#    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
 ARG ILASTIK_VERSION=ilastik-1.3.2post1-Linux.tar.bz2
@@ -95,16 +95,16 @@ RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
 USER $NB_UID
 
 # install rOMERO
-ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
-ENV OMERO_LIBS_DOWNLOAD=TRUE
-ARG ROMERO_VERSION=v0.4.7
-RUN cd /opt/romero && \
-    curl -sf https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
-    bash -c "source activate r-omero && Rscript install.R --version=$ROMERO_VERSION --quiet"
+#ENV _JAVA_OPTIONS="-Xss2560k -Xmx2g"
+#ENV OMERO_LIBS_DOWNLOAD=TRUE
+#ARG ROMERO_VERSION=v0.4.7
+#RUN cd /opt/romero && \
+#    curl -sf https://raw.githubusercontent.com/ome/rOMERO-gateway/$ROMERO_VERSION/install.R --output install.R && \
+#    bash -c "source activate r-omero && Rscript install.R --version=$ROMERO_VERSION --quiet"
 
 # OMERO full CLI
 # This currently uses the python2 environment, should we move it to its own?
-ARG OMERO_VERSION=5.5.0
+ARG OMERO_VERSION=5.6.0
 RUN cd /opt/omero && \
     /opt/conda/envs/python3/bin/pip install -q omego && \
     /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
