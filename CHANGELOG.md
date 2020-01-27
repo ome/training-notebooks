@@ -1,3 +1,10 @@
+0.7.1 (January 2019)
+--------------------
+
+- Set memory settings for ilastik ([#48](https://github.com/ome/training-notebooks/pull/48))
+- Update OMERO version to 5.6.0
+- Update rGateway version to 0.4.8
+
 0.7.0 (December 2019)
 ---------------------
 
