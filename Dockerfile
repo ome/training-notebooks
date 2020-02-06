@@ -2,17 +2,17 @@ FROM imagedata/jupyter-docker:0.10.0
 MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 
 # create a python2 environment (for OMERO-PY compatibility)
-ADD docker/environment-python3-omero.yml .setup/
-RUN conda env update -n python3 -q -f .setup/environment-python3-omero.yml
+ADD docker/environment-python2-omero.yml .setup/
+RUN conda env update -n python2 -q -f .setup/environment-python2-omero.yml
 # Don't use this:
 # /opt/conda/envs/python2/bin/python -m ipykernel install --user --name python3 --display-name 'OMERO Python 3'
 # because it doesn't activate conda environment variables
-COPY --chown=1000:100 docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python3/
-COPY --chown=1000:100 docker/python3-kernel.json .local/share/jupyter/kernels/python3/kernel.json
+COPY --chown=1000:100 docker/logo-32x32.png docker/logo-64x64.png .local/share/jupyter/kernels/python2/
+COPY --chown=1000:100 docker/python2-kernel.json .local/share/jupyter/kernels/python2/kernel.json
 
 # Cell Profiler (add to the Python3 environment)
-# ADD docker/environment-python2-cellprofiler.yml .setup/
-# RUN conda env update -n python3 -q -f .setup/environment-python2-cellprofiler.yml
+ADD docker/environment-python2-cellprofiler.yml .setup/
+RUN conda env update -n python2 -q -f .setup/environment-python2-cellprofiler.yml
 # CellProfiler has to be installed in a separate step because it requires
 # the JAVA_HOME environment variable set in the updated environment
 # ARG CELLPROFILER_VERSION=v3.1.8
@@ -25,32 +25,32 @@ COPY --chown=1000:100 docker/python3-kernel.json .local/share/jupyter/kernels/py
 
 # Install BeakerX
 # Necessary to instal in a separate command
-RUN conda install -c anaconda numpy
-RUN conda install -c conda-forge beakerx && \
-    # Jupyterlab component for ipywidgets (must match jupyterlab version) \
-    jupyter labextension install beakerx-jupyterlab
+#RUN conda install -c anaconda numpy
+#RUN conda install -c conda-forge beakerx && \
+#    # Jupyterlab component for ipywidgets (must match jupyterlab version) \
+#    jupyter labextension install beakerx-jupyterlab
 
-USER root
-RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
-    fix-permissions /opt/romero /opt/omero /opt/java-apps /opt/python-apps
-# R requires these two packages at runtime
-RUN apt-get install -y -q \
-    libxrender1 \
-    libsm6
-
-RUN apt-get install -y -q \
-    unzip
-
-RUN apt-get update && apt-get install -y -q \
-    --no-install-recommends bsdtar
+#USER root
+#RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
+#    fix-permissions /opt/romero /opt/omero /opt/java-apps /opt/python-apps
+## R requires these two packages at runtime
+#RUN apt-get install -y -q \
+#    libxrender1 \
+#    libsm6
+#
+#RUN apt-get install -y -q \
+#    unzip
+#
+#RUN apt-get update && apt-get install -y -q \
+#    --no-install-recommends bsdtar
 
 # Install FIJI and few plugins
 RUN cd /opt/java-apps && \
     wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
     unzip fiji-linux64.zip
 RUN cd /opt/java-apps/Fiji.app/plugins && \
-    wget -q https://github.com/ome/omero-insight/releases/download/v5.5.6/OMERO.imagej-5.5.6.zip && \
-    unzip OMERO.imagej-5.5.6.zip && rm OMERO.imagej-5.5.6.zip
+    wget -q https://github.com/ome/omero-insight/releases/download/v5.4.10/OMERO.imagej-5.4.10.zip && \
+    unzip OMERO.imagej-5.4.10.zip && rm OMERO.imagej-5.4.10.zip
 
 RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
 
@@ -59,7 +59,7 @@ RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://s
 #    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
-ARG ILASTIK_VERSION=ilastik-1.3.2post1-Linux.tar.bz2
+ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
 ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
 RUN cd /opt/python-apps && mkdir ilastik-release && \
     bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
@@ -104,10 +104,10 @@ USER $NB_UID
 
 # OMERO full CLI
 # This currently uses the python2 environment, should we move it to its own?
-ARG OMERO_VERSION=5.6.0
+ARG OMERO_VERSION=5.4.10
 RUN cd /opt/omero && \
-    /opt/conda/envs/python3/bin/pip install -q omego && \
-    /opt/conda/envs/python3/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
+    /opt/conda/envs/python2/bin/pip install -q omego && \
+    /opt/conda/envs/python2/bin/omego download -q --sym OMERO.server server --release $OMERO_VERSION && \
     rm OMERO.server-*.zip
 ADD docker/omero-bin.sh /usr/local/bin/omero
 
