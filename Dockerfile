@@ -45,15 +45,15 @@ COPY --chown=1000:100 docker/python2-kernel.json .local/share/jupyter/kernels/py
 #    --no-install-recommends bsdtar
 
 # Install FIJI and few plugins
-RUN cd /opt/java-apps && \
-    wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
-    unzip fiji-linux64.zip
-RUN cd /opt/java-apps/Fiji.app/plugins && \
-    wget -q https://github.com/ome/omero-insight/releases/download/v5.4.10/OMERO.imagej-5.4.10.zip && \
-    unzip OMERO.imagej-5.4.10.zip && rm OMERO.imagej-5.4.10.zip
-
-RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
-
+#RUN cd /opt/java-apps && \
+#    wget -q https://downloads.imagej.net/fiji/latest/fiji-linux64.zip && \
+#    unzip fiji-linux64.zip
+#RUN cd /opt/java-apps/Fiji.app/plugins && \
+#    wget -q https://github.com/ome/omero-insight/releases/download/v5.4.10/OMERO.imagej-5.4.10.zip && \
+#    unzip OMERO.imagej-5.4.10.zip && rm OMERO.imagej-5.4.10.zip
+#
+#RUN /opt/java-apps/Fiji.app/ImageJ-linux64 --update add-update-site BF https://sites.imagej.net/Bio-Formats/
+#
 # Install Orbit
 #RUN cd /opt/java-apps && \
 #    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
