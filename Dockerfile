@@ -11,8 +11,8 @@ COPY --chown=1000:100 docker/logo-32x32.png docker/logo-64x64.png .local/share/j
 COPY --chown=1000:100 docker/python2-kernel.json .local/share/jupyter/kernels/python2/kernel.json
 
 # Cell Profiler (add to the Python3 environment)
-ADD docker/environment-python2-cellprofiler.yml .setup/
-RUN conda env update -n python2 -q -f .setup/environment-python2-cellprofiler.yml
+#ADD docker/environment-python2-cellprofiler.yml .setup/
+#RUN conda env update -n python2 -q -f .setup/environment-python2-cellprofiler.yml
 # CellProfiler has to be installed in a separate step because it requires
 # the JAVA_HOME environment variable set in the updated environment
 # ARG CELLPROFILER_VERSION=v3.1.8
