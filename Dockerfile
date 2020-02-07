@@ -30,7 +30,7 @@ COPY --chown=1000:100 docker/python2-kernel.json .local/share/jupyter/kernels/py
 #    # Jupyterlab component for ipywidgets (must match jupyterlab version) \
 #    jupyter labextension install beakerx-jupyterlab
 
-#USER root
+USER root
 #RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
 #    fix-permissions /opt/romero /opt/omero /opt/java-apps /opt/python-apps
 ## R requires these two packages at runtime
@@ -59,17 +59,17 @@ COPY --chown=1000:100 docker/python2-kernel.json .local/share/jupyter/kernels/py
 #    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
-#ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
-#ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
-#RUN cd /opt/python-apps && mkdir ilastik-release && \
-#    bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
-#
-#RUN apt-get update && \
-#    apt-get install -y \
-#        apt-utils \
-#        software-properties-common && \
-#    apt-get upgrade -y
-#
+ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
+ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
+RUN cd /opt/python-apps && mkdir ilastik-release && \
+    bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
+
+RUN apt-get update && \
+    apt-get install -y \
+        apt-utils \
+        software-properties-common && \
+    apt-get upgrade -y
+
 ## get Xvfb virtual X server and configure
 #RUN apt-get install -y \
 #        xvfb \
