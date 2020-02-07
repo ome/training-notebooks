@@ -38,11 +38,11 @@ RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
 #    libxrender1 \
 #    libsm6
 #
-#RUN apt-get install -y -q \
-#    unzip
-#
-#RUN apt-get update && apt-get install -y -q \
-#    --no-install-recommends bsdtar
+RUN apt-get install -y -q \
+    unzip
+
+RUN apt-get update && apt-get install -y -q \
+    --no-install-recommends bsdtar
 
 # Install FIJI and few plugins
 #RUN cd /opt/java-apps && \
@@ -59,17 +59,17 @@ RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
 #    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
-#ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
-#ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
-#RUN cd /opt/python-apps && mkdir ilastik-release && \
-#    bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
-#
-#RUN apt-get update && \
-#    apt-get install -y \
-#        apt-utils \
-#        software-properties-common && \
-#    apt-get upgrade -y
-#
+ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
+ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
+RUN cd /opt/python-apps && mkdir ilastik-release && \
+    bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
+
+RUN apt-get update && \
+    apt-get install -y \
+        apt-utils \
+        software-properties-common && \
+    apt-get upgrade -y
+
 ## get Xvfb virtual X server and configure
 #RUN apt-get install -y \
 #        xvfb \
