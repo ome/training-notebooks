@@ -59,38 +59,38 @@ COPY --chown=1000:100 docker/python2-kernel.json .local/share/jupyter/kernels/py
 #    curl -s http://www.stritt.de/files/orbit_linux_315.tar.gz | tar xz
 
 # Install ilastik
-ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
-ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
-RUN cd /opt/python-apps && mkdir ilastik-release && \
-    bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
-
-RUN apt-get update && \
-    apt-get install -y \
-        apt-utils \
-        software-properties-common && \
-    apt-get upgrade -y
- 
-# get Xvfb virtual X server and configure
-RUN apt-get install -y \
-        xvfb \
-        x11vnc \
-        x11-xkb-utils \
-        xfonts-100dpi \
-        xfonts-75dpi \
-        xfonts-scalable \
-        xfonts-cyrillic \
-        x11-apps \
-        libxrender1 \
-        libxtst6 \
-        libxi6 
-                    
+#ARG ILASTIK_VERSION=ilastik-1.3.3post2-Linux.tar.bz2
+#ADD http://files.ilastik.org/$ILASTIK_VERSION /opt/python-apps/
+#RUN cd /opt/python-apps && mkdir ilastik-release && \
+#    bsdtar xjf /opt/python-apps/$ILASTIK_VERSION -C /opt/python-apps/ilastik-release --strip-components=1 && rm /opt/python-apps/$ILASTIK_VERSION
+#
+#RUN apt-get update && \
+#    apt-get install -y \
+#        apt-utils \
+#        software-properties-common && \
+#    apt-get upgrade -y
+#
+## get Xvfb virtual X server and configure
+#RUN apt-get install -y \
+#        xvfb \
+#        x11vnc \
+#        x11-xkb-utils \
+#        xfonts-100dpi \
+#        xfonts-75dpi \
+#        xfonts-scalable \
+#        xfonts-cyrillic \
+#        x11-apps \
+#        libxrender1 \
+#        libxtst6 \
+#        libxi6
+#
 # Setting ENV for Xvfb and Fiji
-ENV DISPLAY :99
-ENV PATH $PATH:/opt/java-apps/Fiji.app/
-
+#ENV DISPLAY :99
+#ENV PATH $PATH:/opt/java-apps/Fiji.app/
+#
 # Adjust start.sh
 #RUN sed -i 's/exec \$cmd/exec xvfb-run \$cmd/' /usr/local/bin/start.sh
-RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
+#RUN sed -i 's/exec/exec xvfb-run/' /usr/local/bin/start.sh
 
 USER $NB_UID
 
