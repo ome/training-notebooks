@@ -31,8 +31,8 @@ COPY --chown=1000:100 docker/python2-kernel.json .local/share/jupyter/kernels/py
 #    jupyter labextension install beakerx-jupyterlab
 
 USER root
-#RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
-#    fix-permissions /opt/romero /opt/omero /opt/java-apps /opt/python-apps
+RUN mkdir /opt/romero /opt/omero /opt/java-apps /opt/python-apps && \
+    fix-permissions /opt/romero /opt/omero /opt/java-apps /opt/python-apps
 ## R requires these two packages at runtime
 #RUN apt-get install -y -q \
 #    libxrender1 \
