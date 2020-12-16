@@ -44,7 +44,7 @@ The notebooks in this repository are meant to exemplify how to access data in OM
 | **[SimpleFRAP](Python/SimpleFRAP.ipynb)** | Py | Process a dataset measuring the intensity in a named Channel within a ROI. |
 
 
-The notebooks have now been migrated to other repositories so they can be used using [BinderHub](https://binderhub.readthedocs.io/en/latest/):
+The notebooks have now been moved to other repositories so they can be run using [BinderHub](https://binderhub.readthedocs.io/en/latest/):
 
 * Notebooks under [CellProfiler](CellProfiler) are now available at [omero-guide-cellprofiler](https://github.com/ome/omero-guide-cellprofiler).
 * Notebooks under [ilastik](ilastik) are now available at [omero-guide-ilastik](https://github.com/ome/omero-guide-ilastik).
