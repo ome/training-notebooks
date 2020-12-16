@@ -42,3 +42,14 @@ The notebooks in this repository are meant to exemplify how to access data in OM
 | **[Statistics Fruit Fly](CellProfiler/statistics_fruit_fly.ipynb)** | Py | Process Images stored in OMERO using CellProfiler. |
 | **[idr0002](CellProfiler/idr0002.ipynb)** | Py | Process a plate from idr0002 using CellProfiler. |
 | **[SimpleFRAP](Python/SimpleFRAP.ipynb)** | Py | Process a dataset measuring the intensity in a named Channel within a ROI. |
+
+
+The notebooks have now been migrated to other repositories so they can be used using [BinderHub](https://binderhub.readthedocs.io/en/latest/):
+
+* Notebooks under [CellProfiler](CellProfiler) are now available at [omero-guide-cellprofiler](https://github.com/ome/omero-guide-cellprofiler).
+* Notebooks under [ilastik](ilastik) are now available at [omero-guide-ilastik](https://github.com/ome/omero-guide-ilastik).
+* Notebooks under [Fiji](Fiji) are now available at [omero-guide-fiji](https://github.com/ome/omero-guide-fiji).
+* Notebooks under [Orbit](Orbit) are now available at [omero-guide-orbit](https://github.com/ome/omero-guide-orbit).
+* Notebooks under [Python](Python) are now available at [omero-guide-python](https://github.com/ome/omero-guide-python).
+* Notebooks under [R](R) are now available at [omero-guide-r](https://github.com/ome/omero-guide-r).
+
